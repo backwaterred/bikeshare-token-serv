@@ -50,7 +50,7 @@ fn timestamp() -> HttpResponse {
 async fn main() -> io::Result<()> {
 
     let mut ssl_builder = SslAcceptor::mozilla_intermediate(SslMethod::tls())
-        .expect("Unalbe to create ssl builder");
+        .expect("Unable to create ssl builder");
     ssl_builder.set_private_key_file("/etc/letsencrypt/live/getyrtokens.ddns.net/privkey.pem", SslFiletype::PEM)
                .expect("Couldn't find the private key for SSL cxn");
     ssl_builder.set_certificate_chain_file("/etc/letsencrypt/live/getyrtokens.ddns.net/fullchain.pem")
@@ -67,7 +67,7 @@ async fn main() -> io::Result<()> {
                 Cors::default()
             )
     })
-    .bind("0.0.0.0:80")?
+    //.bind("0.0.0.0:80")?
     .bind_openssl("0.0.0.0:443", ssl_builder)?
     .run()
     .await
