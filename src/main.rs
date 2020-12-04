@@ -3,6 +3,7 @@ use std::fs;
 use std::time;
 use actix_web::{web, App, HttpResponse, HttpServer};
 use actix_cors::Cors;
+use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 
 mod token;
 
@@ -48,6 +49,13 @@ fn timestamp() -> HttpResponse {
 #[actix_web::main]
 async fn main() -> io::Result<()> {
 
+    let mut ssl_builder = SslAcceptor::mozilla_intermediate(SslMethod::tls())
+        .expect("Unalbe to create ssl builder");
+    ssl_builder.set_private_key_file("/etc/letsencrypt/live/getyrtokens.ddns.net/privkey.pem", SslFiletype::PEM)
+               .expect("Couldn't find the private key for SSL cxn");
+    ssl_builder.set_certificate_chain_file("/etc/letsencrypt/live/getyrtokens.ddns.net/fullchain.pem")
+               .expect("Couldn't find the chain file for SSL cxn");
+
     HttpServer::new(|| {
         App::new()
             .route("/",      web::get().to(|| {file("docs.html")}))
@@ -59,7 +67,8 @@ async fn main() -> io::Result<()> {
                 Cors::default()
             )
     })
-    .bind("127.0.0.1:8080")?
+    .bind("0.0.0.0:80")?
+    .bind_openssl("0.0.0.0:443", ssl_builder)?
     .run()
     .await
 }
