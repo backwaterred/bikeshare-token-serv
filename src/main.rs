@@ -58,7 +58,7 @@ async fn main() -> io::Result<()> {
 
     HttpServer::new(|| {
         App::new()
-            .route("/",      web::get().to(|| {file("docs.html")}))
+            .route("/",      web::get().to(|| {file("public/docs.html")}))
             .route("/test",  web::get().to(test))
             .route("/timestamp",  web::get().to(timestamp))
             .route("/cert",  web::get().to(|| {file("id_rsa_pem.pub")}))
