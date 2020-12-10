@@ -32,8 +32,7 @@ fn token(log: web::Data<Mutex<HashMap<String, Option<u32>>>>, bike_id: String) -
     }
 }
 
-fn finalize(log: web::Data<Mutex<HashMap<String, Option<u32>>>>, token: web::Path<String>, duration: web::Path<u32>) -> HttpResponse {
-    let token = token.into_inner();
+fn finalize(log: web::Data<Mutex<HashMap<String, Option<u32>>>>, token: String, duration: web::Path<u32>) -> HttpResponse {
     let duration = duration.into_inner();
 
     let mut log = log.lock().expect("Unable to lock log");
@@ -55,8 +54,7 @@ fn finalize(log: web::Data<Mutex<HashMap<String, Option<u32>>>>, token: web::Pat
 
 // Mgmt Endpoints
 
-fn audit(log: web::Data<Mutex<HashMap<String, Option<u32>>>>, token: web::Path<String>, check_dur: web::Path<u32>) -> HttpResponse {
-    let token = token.into_inner();
+fn audit(log: web::Data<Mutex<HashMap<String, Option<u32>>>>, token: String, check_dur: web::Path<u32>) -> HttpResponse {
     let check_dur = check_dur.into_inner();
 
     let log = log.lock().expect("Unable to lock log");
@@ -153,12 +151,12 @@ async fn main() -> io::Result<()> {
         App::new()
             .app_data(token_log.clone())
         // User Endpoints
-            .route("/token",          web::post().to(token))
-            .route("/token/{bikeid}", web::get().to(token))
-            .route("/finalize/{token}/{duration}", web::get().to(finalize))
+            .route("/user/token",               web::post().to(token))
+            .route("/user/token/{bikeid}",      web::get().to(token))
+            .route("/user/finalize/{duration}", web::put().to(finalize))
         // Management Endpoints
-            .route("/admin/audit/{token}/{duration}", web::get().to(audit))
-            .route("/admin/summary",                  web::get().to(summary))
+            .route("/admin/audit/{duration}", web::put().to(audit))
+            .route("/admin/summary",          web::get().to(summary))
         // Dev Endpoints
             .route("/",          web::get().to(|| {file("public/docs.html")}))
             .route("/cert",      web::get().to(|| {file("id_rsa_pem.pub")}))
