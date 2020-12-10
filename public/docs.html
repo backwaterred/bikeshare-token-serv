@@ -22,20 +22,41 @@
 <header id="title-block-header">
 <h1 class="title">BikeShare Token Server</h1>
 </header>
+<p><img src="http://3.bp.blogspot.com/-SK8CvVbZrT0/TqlFEjIS4XI/AAAAAAAAA6s/wM2FyKrlWjk/s1600/PA240019.JPG" alt="bike rider on playground equipment"
+    title="Wicket Riding" height="200" /></p>
 <h2 id="users">Users</h2>
 <h3 id="token-acquisition">Token Acquisition</h3>
-<p>This endpoint allows users to make a POST request to <code>/token</code> with the bike-id as the message body or a GET request to <code>/token/&lt;bike-id&gt;</code>.</p>
-<p>Tokens are signed, base64 encoded strings. Decrypted tokens are of the form: <code>TOK=&lt;bike-id&gt;-&lt;timestamp&gt;</code></p>
+<p>Use endpoints <code>GET /user/token&lt;bike-id&gt;</code> and <code>POST /user/token</code> to get a new token. Post request must contain a bikeid in the request body.</p>
 <p>Where:</p>
 <ul>
 <li><code>&lt;bike-id&gt;</code> is identical to the id passed in to the original request.</li>
 <li><code>&lt;timestamp&gt;</code> is the number of seconds from Jan 1 1970.</li>
 </ul>
-<p>eg. <code>TOK=BIKE001-1234567890</code></p>
+<p>Returns:</p>
+<ul>
+<li>200 Ok: With a token in the response body.</li>
+<li>5** Internal Server Error: When unable to acquire system time.</li>
+</ul>
+<h4 id="token-format">Token Format</h4>
+<p>Tokens are signed (by the server’s private RSA key), base64 encoded strings.</p>
+<p>Decrypted tokens are of the form: <code>TOK=&lt;bike-id&gt;-&lt;timestamp&gt;</code></p>
+<p>Example decrypted token: <code>TOK=BIKE001-1234567890</code></p>
+<h3 id="finalize-rental">Finalize Rental</h3>
+<p>Complete the rental by submitting a time to <code>PUT /user/finalize/&lt;duration&gt;</code> with the token in the request body.</p>
+<p>Where:</p>
+<ul>
+<li><code>&lt;duration&gt;</code> is the length of the ride in seconds.</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>200: Ok When the ride is finalized successfully.</li>
+<li>403: Forbidden When the ride has already been finalized.</li>
+<li>400: Bad Request When no record of the token is found on the server.</li>
+</ul>
 <h2 id="management">Management</h2>
 <p>A bikeshare operator will need to audit the logs on their fleet. These endpoints may be helpful in doing so.</p>
 <h3 id="audit">Audit</h3>
-<p>The endpoint <code>GET /admin/audit/&lt;token&gt;/&lt;duration&gt;</code> allows admin users to check whether the time of the rental stored on the on the server under the given token (reported by the user) match the given time (taken from logs on the bike). The response text indicates audit success or failure.</p>
+<p>The endpoint <code>PUT /admin/audit/&lt;duration&gt;</code> allows admin users to check whether the time of the rental stored on the on the server under the given token (reported by the user) match the given time (taken from logs on the bike). The response text indicates audit success or failure.</p>
 <p>Where:</p>
 <ul>
 <li><code>&lt;token&gt;</code> is the signed, base64 token used to rent the bike.</li>
