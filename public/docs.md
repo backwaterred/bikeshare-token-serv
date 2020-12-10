@@ -1,5 +1,5 @@
 <img src="http://3.bp.blogspot.com/-SK8CvVbZrT0/TqlFEjIS4XI/AAAAAAAAA6s/wM2FyKrlWjk/s1600/PA240019.JPG" alt="bike rider on playground equipment"
-	title="Wicket Riding" height="200" />
+	title="Wicked Riding" width="60%" />
 
 ## Users
 
