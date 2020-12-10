@@ -169,7 +169,7 @@ async fn main() -> io::Result<()> {
                 Cors::default()
             )
     })
-    .bind("0.0.0.0:8000")?
+    .bind("0.0.0.0:80")?
     .bind_openssl("0.0.0.0:443", ssl_builder)?
     .run()
     .await
