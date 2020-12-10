@@ -1,13 +1,56 @@
-<h1 id="token">Token</h1>
-<p>Getting a token is easy! Make a POST request to <code>/token</code> with the bike-id as the message body.</p>
-<p>Tokens are signed, base64 encoded strings. Decrypted tokens are of the form: <code>TOK=&lt;bike-id&gt;-&lt;timestamp&gt;</code>. The <code>&lt;bike-id&gt;</code> is identical to the id passed in to the original request. The <code>&lt;timestamp&gt;</code> is the number of seconds from Jan 1 1970.</p>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>BikeShare Token Server</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="style.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">BikeShare Token Server</h1>
+</header>
+<h2 id="users">Users</h2>
+<h3 id="token-acquisition">Token Acquisition</h3>
+<p>This endpoint allows users to make a POST request to <code>/token</code> with the bike-id as the message body or a GET request to <code>/token/&lt;bike-id&gt;</code>.</p>
+<p>Tokens are signed, base64 encoded strings. Decrypted tokens are of the form: <code>TOK=&lt;bike-id&gt;-&lt;timestamp&gt;</code></p>
+<p>Where:</p>
+<ul>
+<li><code>&lt;bike-id&gt;</code> is identical to the id passed in to the original request.</li>
+<li><code>&lt;timestamp&gt;</code> is the number of seconds from Jan 1 1970.</li>
+</ul>
 <p>eg. <code>TOK=BIKE001-1234567890</code></p>
-<h1 id="timestamp">Timestamp</h1>
-<p><strong>Not for Production use</strong></p>
+<h2 id="management">Management</h2>
+<p>A bikeshare operator will need to audit the logs on their fleet. These endpoints may be helpful in doing so.</p>
+<h3 id="audit">Audit</h3>
+<p>The endpoint <code>GET /admin/audit/&lt;token&gt;/&lt;duration&gt;</code> allows admin users to check whether the time of the rental stored on the on the server under the given token (reported by the user) match the given time (taken from logs on the bike). The response text indicates audit success or failure.</p>
+<p>Where:</p>
+<ul>
+<li><code>&lt;token&gt;</code> is the signed, base64 token used to rent the bike.</li>
+<li><code>&lt;duration&gt;</code> is a string (part of the URI) indicating the integer number of seconds of the rental.</li>
+</ul>
+<h3 id="summary">Summary</h3>
+<p><code>GET /admin/summary</code> returns a report of all tokens issued since the server came online.</p>
+<h2 id="development">Development</h2>
+<p>The following may be useful for development.</p>
+<h3 id="timestamp">Timestamp</h3>
 <p>The current system time of the server can be checked with GET <code>/timestamp</code>.</p>
-<h1 id="public-key">Public Key</h1>
-<p><strong>Not for Production use</strong></p>
+<h3 id="public-key">Public Key</h3>
 <p>To get a copy of this server's public key. Make a GET request to <code>/cert</code>.</p>
-<h1 id="testing">Testing</h1>
-<p><strong>Not for Production use</strong></p>
+<h3 id="testing">Testing</h3>
 <p>To get back an invalid token (of an expected format for testing purposes), Make a GET request to <code>/test</code>. The token will be formed with bike id: INVALID-TEST-BIKEID and timestamp 0.</p>
+<p><code>TOK=INVALID-TEST-BIKEID-0</code></p>
+</body>
+</html>
